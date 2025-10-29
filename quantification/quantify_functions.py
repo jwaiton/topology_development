@@ -1,3 +1,13 @@
+'''
+Functions that quantify the tracks.
+
+Either:
+- Apply a metric to the resulting tracks given certain tracking outputs.
+- Produce the tracking outputs
+
+'''
+
+
 import sys,os,os.path
 import numpy as np
 import pandas as pd

@@ -29,24 +29,42 @@ from invisible_cities.evm.event_model       import             HitCollection
 from invisible_cities.io.hits_io            import hits_from_df
 
 
-def output_wrapper():
-    '''
+# output the accuracy of the blob positions
+def output_inaccuracy(df, df_MC):
 
-    Takes a topological function that extracts blob position,
-    and compares the result to a standardised MC result 
-    (itself not perfect).
+    RECO_b1_xyz = np.column_stack([df.blob1_x[0], df.blob1_y[0], df.blob1_z[0]])
+    RECO_b2_xyz = np.column_stack([df.blob2_x[0], df.blob2_y[0], df.blob2_z[0]])
 
-    Parameters:
-    - func : function to return topological information
-    - RECO : RECO to analyse
-    - MC   : MC to analyse
+    MC_b1_xyz = np.column_stack([df_MC.blob1_x[0], df_MC.blob1_y[0], df_MC.blob1_z[0]])
+    MC_b2_xyz = np.column_stack([df_MC.blob2_x[0], df_MC.blob2_y[0], df_MC.blob2_z[0]])
+
+
+    dist_b1 = np.linalg.norm((RECO_b1_xyz) - (MC_b1_xyz))
+    dist_b2 = np.linalg.norm((RECO_b2_xyz) - (MC_b2_xyz))
+    print(f"Blob 1 RECO/MC distance: {dist_b1:.2f}mm")
+    print(f"Blob 2 RECO/MC distance: {dist_b2:.2f}mm")
+
+    print('=' * 20)
+    print('Assuming blobs flipped: ')
+    dist_b1_flip = np.linalg.norm((RECO_b2_xyz) - (MC_b1_xyz))
+    dist_b2_flip = np.linalg.norm((RECO_b1_xyz) - (MC_b2_xyz))
+    print(f"Blob 1 RECO/ Blob 2 MC distance: {dist_b1_flip:.2f}mm")
+    print(f"Blob 2 RECO/ Blob 1 MC distance: {dist_b2_flip:.2f}mm")
+
+
+def output_wrapper(tracking_df, true_df = 'signal_events.h5'):
     '''
-    print('holder')
+    Takes the tracking dataframe output and compares to the true tracking output
+    '''
+    
 
 
 def apply_paolina_MC(MC):
     '''
     apply paolina to true MC, given a standard set of parameters
+
+    Currently dont need this as the signal_events.h5 has been preloaded with
+    the truth information.
     '''
     print('Empty')
 
@@ -166,6 +184,7 @@ def extract_true_MC_info(MChits):
     No need to apply a scan_radius as it should determine the scan radius itself.
     '''
 
+    # hard-coded for the timebeing, can be changed readily.
     voxel_size_MC         = 1  * units.mm
     blob_radius_MC        = 27 * units.mm
     scan_radius_MC        = 40 * units.mm
